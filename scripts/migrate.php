@@ -67,9 +67,7 @@ try {
         $statement->bindValue('name', $comment["name"]);
         $statement->bindValue('email', $comment["email"]);
         $statement->bindValue('body', $comment["body"]);
-        if(!$statement->execute()){
-            throw new Exception("Error inserting comment: " . $statement->errorInfo()[2]);
-        }
+        $statement->execute();
     }
 
     echo "comments are inserted".PHP_EOL;
