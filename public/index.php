@@ -9,8 +9,21 @@ use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 use Slim\Factory\ServerRequestCreatorFactory;
+use Dotenv\Dotenv;
 
 require __DIR__ . '/../vendor/autoload.php';
+
+$dotenv = Dotenv::createImmutable(__DIR__ . "/../");
+$dotenv->load();
+
+$pdo = new PDO(
+	"mysql:host=".$_ENV['DB_HOST'].";dbname=".$_ENV['DB_DATABASE'].";charset=utf8", 
+	$_ENV['DB_USERNAME'], 
+	$_ENV['DB_PASSWORD'], 
+	[
+		PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+	]
+);
 
 // Instantiate PHP-DI ContainerBuilder
 $containerBuilder = new ContainerBuilder();
@@ -45,7 +58,7 @@ $middleware($app);
 
 // Register routes
 $routes = require __DIR__ . '/../app/routes.php';
-$routes($app);
+$routes($app, $pdo);
 
 /** @var SettingsInterface $settings */
 $settings = $container->get(SettingsInterface::class);
